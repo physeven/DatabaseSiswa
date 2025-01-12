@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data Storage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Personal Data</h1>
+        <input type="text" id="studentName" placeholder="Enter Student Name">
+        <button onclick="searchStudent()">Search</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const students = [
+            { name: "Muhammad Wildan Ar rafi", noHp: "081215604878", asalSMP: "Smpn 2 kartasura", namaBapak: "Budi Purnomo", pekerjaanBapak: "Karyawan swasta", noHpBapak: "081226023337", namaIbu: "Sri Giyatmi", pekerjaanIbu: "Wiraswasta", noHpIbu: "081226018951", alamat: "Morodipan RT 3 RW 1, Gonilan, Kartasura, Sukoharjo" },
+            { name: "Mossa Heandryesa", noHp: "083107770964", asalSMP: "SMPN 2 NGEMPLAK", namaBapak: "Irawan Prasetyo", pekerjaanBapak: "Wiraswasta (pedagang cabai)", noHpBapak: "+62882-9564-8794", namaIbu: "Asri Widyastuti", pekerjaanIbu: "Buruh (pabrik mantol)", noHpIbu: "+62831-4499-7254", alamat: "Pandeyan rt 02/08, Kec.Ngemplak, Kab.Boyolali, Jawa Tengah 57375" },
+            { name: "Arya Bintang Adi Nugroho", noHp: "088232382604", asalSMP: "SMP Negeri 27 Surakarta", namaBapak: "Sukadri", pekerjaanBapak: "Penjual tahu", noHpBapak: "088299344788", namaIbu: "Sumarti", pekerjaanIbu: "Penjual ayam potong keliling", noHpIbu: "-", alamat: "Dk Tegalrejo RT 01 RW 09 Mancasan Baki Sukoharjo" },
+            { name: "Danish Ghaisan", noHp: "089506185700", asalSMP: "SMP ISLAM AL-HADI", namaBapak: "Lalu Saparudini", pekerjaanBapak: "Wiraswasta (mabel)", noHpBapak: "-", namaIbu: "Titi Sukamti", pekerjaanIbu: "IRT", noHpIbu: "089618452728", alamat: "Jl. Cimelati, Klaruan RT03 RW16, Palur, Mojolaban, Sukoharjo" },
+            { name: "Rafindo Putra Perkasa", noHp: "088239442321", asalSMP: "SMP Muhammadiyah 1 Surakarta", namaBapak: "Fourika Setyawan Putranto", pekerjaanBapak: "Wiraswasta (Penjual Besi)", noHpBapak: "088228672375", namaIbu: "Asri Handayani", pekerjaanIbu: "IRT", noHpIbu: "081226447377", alamat: "Jl. Ngaglik Wonowoso RT 6/RW 12, Mojosongo, Jebres, Kota Surakarta." },
+            { name: "Fauza Aditya Pratama", noHp: "083104980910", asalSMP: "SMPN 2 NGEMPLAK BOYOLALI", namaBapak: "Supriyono", pekerjaanBapak: "Pegawai industri", noHpBapak: "083103312930", namaIbu: "Sri Hariyati", pekerjaanIbu: "IRT", noHpIbu: "083103312930", alamat: "Gatak Rt04/03, Senting, Sambi, Boyolali" },
+            { name: "Muhammad Raid Taufiqurrahman", noHp: "085741372283", asalSMP: "MTSN 1 Surakarta", namaBapak: "Agus Mulyadi", pekerjaanBapak: "Pengerajin blangkon", noHpBapak: "089518241649", namaIbu: "Setyaningsih", pekerjaanIbu: "PNS perawat", noHpIbu: "085647355220", alamat: "Grogol, Dusun III, Langenharjo, Kec. Grogol, Kabupaten Sukoharjo, Jawa Tengah 57552" },
+            { name: "Muhammad Kholil Ma'ruf Khoiruddin", noHp: "089675915068", asalSMP: "SMPN 9 SURAKARTA", namaBapak: "Marfandi", pekerjaanBapak: "Buruh Harian Lepas", noHpBapak: "0899051132", namaIbu: "Sulami", pekerjaanIbu: "Buruh Harian Lepas", noHpIbu: "0895402094062", alamat: "Sidodadi Pajang RT/RW 05/01 Surakarta" },
+            { name: "Bimo Aryo Wicaksono", noHp: "089653433338", asalSMP: "SMPN 24 Surakarta", namaBapak: "Budi Kuntoro", pekerjaanBapak: "Wiraswasta (Tukang parkir di rumah sakit)", noHpBapak: "089673428144", namaIbu: "Ari Setya Wati", pekerjaanIbu: "Wirausaha (penjual nasi goreng)", noHpIbu: "0899523834", alamat: "Baron Gede Rt 1 Rw 1, Laweyan Surakarta" },
+            { name: "Amanda Mega Ranatin", noHp: "085806470640", asalSMP: "SMP Negeri 1 Surakarta", namaBapak: "Surana", pekerjaanBapak: "Wirausaha (Pedagang bakso)", noHpBapak: "085877728708", namaIbu: "Khomsatin", pekerjaanIbu: "Ibu Rumah Tangga", noHpIbu: "085877728708", alamat: "Karangmojo, Rt 03 Rw 06 Sawahan Kec. Ngemplak, Kabupaten Boyolali" },
+            { name: "Annisaa'u Syahidah", noHp: "085869316445", asalSMP: "SMP N 1 KARTASURA", namaBapak: "Ali Mustofa", pekerjaanBapak: "Karyawan swasta (Cleaning Service)", noHpBapak: "085725534262", namaIbu: "Asri Sri Juwarti", pekerjaanIbu: "Ibu rumah tangga", noHpIbu: "083867803330", alamat: "Soditan RT 02/08 Ngadirejo Kartasura, Sukoharjo" },
+            { name: "Fahra Ramadhani", noHp: "081905067884", asalSMP: "SMP Negeri 1 Mojolaban", namaBapak: "Suparjo", pekerjaanBapak: "Tidak bekerja", noHpBapak: "-", namaIbu: "Sumarmi", pekerjaanIbu: "Buruh cuci", noHpIbu: "087812980918", alamat: "Pengin RT 04/RW 01 Cangkol Mojolaban Sukoharjo" },
+            { name: "Alfian Lindan Permana", noHp: "0882006320646", asalSMP: "SMPN Negeri 06 Surakarta", namaBapak: "Nur Cholim", pekerjaanBapak: "Swasta (Tukang Mebel)", noHpBapak: "083154798145", namaIbu: "Retna Ningtyas", pekerjaanIbu: "Karyawan swasta (pegawai apotik)", noHpIbu: "088232629077", alamat: "Gurawan Rt 02 Rw 08, Pasar Kliwon, Surakarta" },
+            { name: "Ryan Faiz", noHp: "081325690009", asalSMP: "SMPN 12 SURAKARTA", namaBapak: "Hari Supriyadi", pekerjaanBapak: "Guru PNS", noHpBapak: "085103800841", namaIbu: "Ani Suryanti", pekerjaanIbu: "Ibu rumah tangga", noHpIbu: "082242609816", alamat: "Perumahan RT6 RW 23 Jaten Karanganyar" },
+            { name: "Muhammad Wisma Y A", noHp: "085640180838", asalSMP: "SMPN 1 Nogosari", namaBapak: "Purwanto Yuliawan", pekerjaanBapak: "PNS (guru SD)", noHpBapak: "0856-4330-5541", namaIbu: "Luluk Setyaningrum", pekerjaanIbu: "Guru SMP", noHpIbu: "085721460065", alamat: "Tagung RT 03 RW 06, Rembun, Nogosari, Boyolali" },
+            { name: "Dani Dwi Febriyan", noHp: "089524431585", asalSMP: "SMPN 2 NGEMPLAK", namaBapak: "Heriyanto", pekerjaanBapak: "Buruh harian lepas", noHpBapak: "081389215283", namaIbu: "Lilik", pekerjaanIbu: "Ibu rumah tangga", noHpIbu: "0895363795103", alamat: "Welar rt 01/rw08 Pandean, Ngemplak, Boyolali" },
+            { name: "Mizan Fatihul Madain", noHp: "082322454687", asalSMP: "SMPN 9 SURAKARTA", namaBapak: "Teguh Wiyono", pekerjaanBapak: "Buruh", noHpBapak: "087861573235", namaIbu: "Puji Rahayu", pekerjaanIbu: "Buruh (Sales)", noHpIbu: "085725148557", alamat: "JL. Tiga Negeri No. 144 Laweyan" },
+            { name: "Andien Alicia Yulanda", noHp: "081393910768", asalSMP: "SMP WARGA SURAKARTA", namaBapak: "Anto", pekerjaanBapak: "Karyawan swasta", noHpBapak: "", namaIbu: "Ary Yulianti", pekerjaanIbu: "Karyawan swasta", noHpIbu: "+62 813-9161-3650", alamat: "Gaum Tasikmadu Karanganyar" }
+        ];
+
+        function searchStudent() {
+            let name = document.getElementById('studentName').value.trim().toLowerCase();
+            let result = document.getElementById('result');
+            result.innerHTML = '';
+            let foundStudents = students.filter(student => student.name.toLowerCase().includes(name));
+            if (foundStudents.length > 0) {
+                foundStudents.forEach(student => {
+                    let studentData = `
+                        <div>
+                            <strong>Name:</strong> ${student.name}<br>
+                            <strong>Phone:</strong> ${student.noHp}<br>
+                            <strong>School:</strong> ${student.asalSMP}<br>
+                            <strong>Father's Name:</strong> ${student.namaBapak}<br>
+                            <strong>Father's Job:</strong> ${student.pekerjaanBapak}<br>
+                            <strong>Father's Phone:</strong> ${student.noHpBapak}<br>
+                            <strong>Mother's Name:</strong> ${student.namaIbu}<br>
+                            <strong>Mother's Job:</strong> ${student.pekerjaanIbu}<br>
+                            <strong>Mother's Phone:</strong> ${student.noHpIbu}<br>
+                            <strong>Address:</strong> ${student.alamat}<br>
+                        </div>
+                        <hr>`;
+                    result.innerHTML += studentData;
+                });
+            } else {
+                result.innerHTML = '<p>No student found with that name.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
